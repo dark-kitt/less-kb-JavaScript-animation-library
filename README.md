@@ -18,10 +18,6 @@ Just shorthand.
 
 Created with requestAnimationFrame. If requestAnimationFrame is not supported, the function returns an expended setInterval / setTimeout.
 
-	isMobile(); // returns true
-
-Mobile browser detection.
-
 	addClass(elem, {
 		class: class,
 		remove: delay
