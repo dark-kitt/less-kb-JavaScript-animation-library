@@ -34,4 +34,4 @@ Must have when jQuery is not available.
 	drawPath();
 	textTyping();
 
-Usage of all functions is explained in `animation-library/_examples`. Open the html file in your editor to see what is required.
+Usage of all functions is explained in `animation-library/_examples`. The requirements for each function are explained in the html file.
