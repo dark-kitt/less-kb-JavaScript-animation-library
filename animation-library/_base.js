@@ -169,15 +169,20 @@
 	var allAniSelectors = [];
 	document.addEventListener('DOMContentLoaded', function() {
 		for (var i = 0; i < document.styleSheets.length; i++) {
-			if (document.styleSheets[i].cssRules !== null) {
-				if (document.styleSheets[i].cssRules.length > 0) {
-					for (var j = 0; j < document.styleSheets[i].cssRules.length; j++) {
-						if (document.styleSheets[i].cssRules[j].cssText.match(/\banimation(\s+|):/g)) {
-							var selector = document.styleSheets[i].cssRules[j].cssText.match(/(.*?)(\s+|)(\{)/g);
-								allAniSelectors.push(selector[0].replace(/\s+\{/g, ''));
+			try {
+				if (document.styleSheets[i].cssRules !== null) {
+					if (document.styleSheets[i].cssRules.length > 0) {
+						for (var j = 0; j < document.styleSheets[i].cssRules.length; j++) {
+							if (document.styleSheets[i].cssRules[j].cssText.match(/\banimation(\s+|):/g)) {
+								var selector = document.styleSheets[i].cssRules[j].cssText.match(/(.*?)(\s+|)(\{)/g);
+									allAniSelectors.push(selector[0].replace(/\s+\{/g, ''));
+							}
 						}
 					}
 				}
+			}
+			catch(err) {
+				console.warn('The cssRules object is empty (document.styleSheets.cssRules). ' + err + ' ' + document.styleSheets[i].ownerNode.outerHTML);
 			}
 		}
 	}, false);
