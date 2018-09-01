@@ -1,9 +1,17 @@
 (function() {
 	/* make sure that all CSS animation, setInterval and setTimeout be paused while the Tab isn't visible */
-	var checkVisibility = true,
+	var checkVisibility = false,
 		allSetTimeouts = [],
 		allAnimationTimeouts = [],
 		timeStamp = ( !window.performance.now ) ? new Date().getTime() : performance.now();
+
+	if (document.hasFocus()) {
+		checkVisibility = true;
+	} else {
+		if (!document.hidden) {
+			checkVisibility = true;
+		}
+	}
 
 	window.newSetTimeout = window.setTimeout;
 	window.newSetInterval = window.setInterval;

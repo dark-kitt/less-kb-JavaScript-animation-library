@@ -47,6 +47,7 @@ var textTyping = function (o) {
 
 	return animationTimeout(function() {
 
+		target.innerHTML = '';
 		var textCon = document.createElement('SPAN');
 
 		if(o.id || o.el){

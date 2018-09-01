@@ -1,8 +1,16 @@
 (function() {
-	var checkVisibility = true,
+	var checkVisibility = false,
 		allSetTimeouts = [],
 		allAnimationTimeouts = [],
 		timeStamp = ( !window.performance.now ) ? new Date().getTime() : performance.now();
+
+	if (document.hasFocus()) {
+		checkVisibility = true;
+	} else {
+		if (!document.hidden) {
+			checkVisibility = true;
+		}
+	}
 
 	window.newSetTimeout = window.setTimeout;
 	window.newSetInterval = window.setInterval;
@@ -257,7 +265,8 @@
 				visibility('hidden');
 			}
 		}, false);
-		/*
+
+/* partial chrome bugfix
 		window.addEventListener('focus', function() {
 			checkVisibility = true;
 			visibility('visible');
@@ -266,7 +275,7 @@
 			checkVisibility = false;
 			visibility('hidden');
 		}, false);
-		*/
+*/
 	}
 	if (document.visibilityState) {
 		for (evt in vendorprefixes) {
