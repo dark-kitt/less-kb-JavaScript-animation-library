@@ -35,3 +35,5 @@ Must have when jQuery is not available.
 	textTyping();
 
 Usage of all functions is explained in `animation-library/_examples`. The requirements for each function are explained in the html file.
+
+The canvas animation handling is explained in the canvas-example.js file.
