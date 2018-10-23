@@ -23,9 +23,9 @@ window.onload = function() {
         var canvas = hiDPICanvas('canvas', window.innerWidth, window.innerHeight);
 
         if (append) {
-            parent.append(canvas);
+            parent.appendChild(canvas);
         } else {
-            parent.prepend(canvas);
+            parent.insertBefore(canvas, parent.firstChild);
         }
 
         var can = document.getElementById('canvas'),
