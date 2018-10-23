@@ -21,6 +21,8 @@
 </head>
 
 <body>
+    <div id="test"></div>
+    <br/>
 	<a href="#">
 	<div id="elemID"></div>
 	</a>
@@ -46,12 +48,25 @@
 				fps: 30, frames per second [the loop is build with requestAnimationFrame] (optional/defalut 20, number)
 				text: 'text', string to add (required, string)
 				cursor: 'true', display cursor (optional/defalut true, boolean)
+                justDeleteIt: false, just remove given text (optional/defalut false, boolean)
 				deleteCursorIn: 1000, delete the cursor (optional/defalut 1000,number)
 				deleteIt: true, delete the string to added (optional/defalut false, boolean)
 				deleteIn: 1000, delete the string (optional/defalut 1000,number)
 				deleteTo: 'text', delete the text until (optional/defalut '', string)
 		 * });
 		*/
+        textTyping({
+			id: 'test',
+			delay: 0,
+			fps: 5,
+			text: 'Place your string<br/>here and<br> as much as you like.',
+			cursor: false,
+            justDeleteIt: true,
+			deleteCursorIn: 2000,
+			deleteIt: true,
+			deleteIn: 1000,
+			deleteTo: '',
+		});
 
 		textTyping({
 			id: 'elemID',
