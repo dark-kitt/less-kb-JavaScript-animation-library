@@ -33,9 +33,10 @@
 
     window.setInterval = function(func, timer) {
         var start, loop = function() {
+            var ctx = this, args = arguments;
             if (checkVisibility) {
                 if (start === true) {
-                    func.call();
+                    func.apply(ctx, args);
                 }
                 start = true;
             } else {
@@ -51,9 +52,7 @@
     window.cancelAnimationFrame = (function() {
         return window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.oCancelRequestAnimationFrame;
     })();
-    document.visibilityState = (function() {
-        return document.visibilityState || document.mozVisibilityState || document.webkitVisibilityState;
-    })();
+    document.visibilityState || document.mozVisibilityState || document.webkitVisibilityState;
     window.performance.now = (function() {
         return window.performance.now || window.performance.webkitNow;
     })();
@@ -70,10 +69,11 @@
 
         function loop() {
             var currentTime = (!window.performance.now) ? new Date().getTime() : performance.now(),
-                difference = currentTime - startTime;
+                difference = currentTime - startTime,
+                ctx = this, args = arguments;
 
             if (difference >= interval && checkVisibility === true) {
-                done = func.call();
+                done = func.apply(ctx, args);
                 startTime = currentTime - (difference % interval);
             }
 
@@ -107,9 +107,11 @@
 
         function loop() {
             var currentTime = (!window.performance.now) ? new Date().getTime() : performance.now(),
-                difference = currentTime - startTime;
+                difference = currentTime - startTime,
+                ctx = this, args = arguments;
+
             if (difference >= delay && checkVisibility === true) {
-                func.call();
+                func.apply(ctx, args);
             } else {
                 request.id = requestAnimationFrame(loop);
                 timeoutObj.id = request.id;
@@ -328,102 +330,122 @@
         };
     }
 })();
-var gid = function(id) {
-    return id ? document.getElementById(id) : false;
+var gid = function (id) {
+	return id ? document.getElementById(id) : false;
 },
-gcl = function(cl) {
-    return cl ? document.getElementsByClassName(cl) : false;
+gcl = function (cl) {
+	return cl ? document.getElementsByClassName(cl) : false;
 },
-gtn = function(tn) {
-    return tn ? document.getElementsByTagName(tn) : false;
+gtn = function (tn) {
+	return tn ? document.getElementsByTagName(tn) : false;
 },
+/* define custom hasClass, removeClass and addClass */
 getClassName = function(cls) {
-    return new RegExp('(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)');
-},
+		return new RegExp('(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)');
+	},
 hasClass = function(e, cls) {
-    if (e instanceof SVGElement) {
-        return e.className.baseVal.match(getClassName(cls)) === null ? false : true;
-    } else {
-        return e.className.match(getClassName(cls)) === null ? false : true;
-    }
+	if (e instanceof SVGElement) {
+		return e.className.baseVal.match(getClassName(cls)) === null ? false : true;
+	} else {
+		return e.className.match(getClassName(cls)) === null ? false : true;
+	}
 },
 removeClass = function(e, cls) {
-    if (hasClass(e, cls)) {
-        if (e instanceof SVGElement) {
-            e.className.baseVal = e.className.baseVal.replace(/\s+/g, ' ');
-            if (e.className.baseVal.match('(?:\\w|\\d)(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)(?:\\w|\\d)') === null) {
-                e.className.baseVal = e.className.baseVal.replace(getClassName(cls), '');
-            } else {
-                e.className.baseVal = e.className.baseVal.replace(getClassName(cls), ' ');
-            }
-        } else {
-            e.className = e.className.replace(/\s+/g, ' ');
-            if (e.className.match('(?:\\w|\\d)(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)(?:\\w|\\d)') === null) {
-                e.className = e.className.replace(getClassName(cls), '');
-            } else {
-                e.className = e.className.replace(getClassName(cls), ' ');
-            }
-        }
-    }
+	if (hasClass(e, cls)) {
+		if (e instanceof SVGElement) {
+			e.className.baseVal = e.className.baseVal.replace(/\s+/g, ' ');
+			if (e.className.match('(?:\\w|\\d)(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)(?:\\w|\\d)') === null) {
+				e.className.baseVal = e.className.baseVal.replace(getClassName(cls), '');
+			} else {
+				e.className.baseVal = e.className.baseVal.replace(getClassName(cls), ' ');
+			}
+		} else {
+			e.className = e.className.replace(/\s+/g, ' ');
+			if (e.className.match('(?:\\w|\\d)(?:\\s+|^)(' + cls + '\\b)(?:\\s+|$)(?:\\w|\\d)') === null) {
+				e.className = e.className.replace(getClassName(cls), '');
+			} else {
+				e.className = e.className.replace(getClassName(cls), ' ');
+			}
+		}
+	}
 },
 addClass = function(e, o) {
-    if (!o.remove) {
-        o.remove = null;
-    }
-    if (e instanceof SVGElement) {
-        e.className.baseVal = e.className.baseVal.replace(/\s+/g, ' ');
-        if (!this.hasClass(e, o.class)) {
-            if (o.remove !== null) {
-                e.className.baseVal += ' ' + o.class;
-                setTimeout(function() {
-                    removeClass(e, o.class);
-                }, o.remove);
-            } else {
-                e.className.baseVal += ' ' + o.class;
-            }
-        }
-    } else {
-        if (!this.hasClass(e, o.class)) {
-            e.className = e.className.replace(/\s+/g, ' ');
-            if (o.remove !== null) {
-                e.className += ' ' + o.class;
-                setTimeout(function() {
-                    removeClass(e, o.class);
-                }, o.remove);
-            } else {
-                e.className += ' ' + o.class;
-            }
-        }
-    }
+	if (!o.remove) {
+		o.remove = null;
+	}
+	if (e instanceof SVGElement) {
+		e.className.baseVal = e.className.baseVal.replace(/\s+/g, ' ');
+		if (!this.hasClass(e, o.class)) {
+			if (o.remove !== null) {
+				e.className.baseVal += ' ' + o.class;
+				setTimeout(function() {
+					removeClass(e, o.class);
+				}, o.remove);
+			} else {
+				e.className.baseVal += ' ' + o.class;
+			}
+		}
+	} else {
+		if (!this.hasClass(e, o.class)) {
+			e.className = e.className.replace(/\s+/g, ' ');
+			if (o.remove !== null) {
+				e.className += ' ' + o.class;
+				setTimeout(function() {
+					removeClass(e, o.class);
+				}, o.remove);
+			} else {
+				e.className += ' ' + o.class;
+			}
+		}
+	}
 },
 pixelRatio = (function() {
-    var can = document.createElement('canvas').getContext('2d'),
+    var canvas = document.createElement('canvas').getContext('2d'),
         dpr = window.devicePixelRatio || 1,
-        bsr = can.webkitBackingStorePixelRatio ||
-        can.mozBackingStorePixelRatio ||
-        can.msBackingStorePixelRatio ||
-        can.oBackingStorePixelRatio ||
-        can.backingStorePixelRatio || 1;
+        bsr = canvas.webkitBackingStorePixelRatio ||
+        canvas.mozBackingStorePixelRatio ||
+        canvas.msBackingStorePixelRatio ||
+        canvas.oBackingStorePixelRatio ||
+        canvas.backingStorePixelRatio || 1;
     return dpr / bsr;
 })(),
-hiDPICanvas = function(id, width, height) {
+/* create or update hiDPI canvas (onresize)*/
+setCanvas = function(id, width, height) {
     var can;
     if (document.getElementById(id)) {
+
         can = document.getElementById(id);
+        var ctx = can.getContext('2d');
+
+        var tempCan = document.createElement('canvas'),
+            tempCtx = tempCan.getContext('2d');
+
+        tempCan.style.width = width + 'px';
+        tempCan.style.height = height + 'px';
+        tempCan.width = width;
+        tempCan.height = height;
+
+        tempCtx.drawImage(ctx.canvas, 0, 0);
+
         can.style.width = width + 'px';
         can.style.height = height + 'px';
-        can.width = width * pixelRatio;
-        can.height = height * pixelRatio;
-        can.getContext('2d').setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        can.width = width;
+        can.height = height;
+
+        ctx.drawImage(tempCtx.canvas, 0, 0);
+
     } else {
+
         can = document.createElement('canvas');
+
         if (can !== null) {
+
             can.style.width = width + 'px';
             can.style.height = height + 'px';
-            can.width = width * pixelRatio;
-            can.height = height * pixelRatio;
+            can.width = width;
+            can.height = height;
             can.setAttribute('id', id);
-            can.getContext('2d').setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
             return can;
         }
     }
@@ -440,9 +462,9 @@ startAnimation = function(can, ctx, objs, loop) {
 stopAnimation = function(req) {
     window.cancelAnimationFrame(req);
 },
-fixValue = function(num, plc) {
-    var place = plc || (plc === 0 ? 0 : 2);
-    return parseFloat(num.toFixed(place));
+fixValue = function(num, places) {
+	var place = places || (places === 0 ? 0 : 2);
+	return parseFloat(num.toFixed(place));
 },
 randomInt = function(min, max) {
     return Math.round(Math.random() * (max - min) + min);

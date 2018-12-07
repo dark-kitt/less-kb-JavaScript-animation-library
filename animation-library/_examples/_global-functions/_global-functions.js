@@ -101,6 +101,46 @@ hiDPICanvas = function(id, width, height) {
         }
     }
 },
+setCanvas = function(id, width, height) {
+    var can;
+    if (document.getElementById(id)) {
+
+        can = document.getElementById(id);
+        var ctx = can.getContext('2d');
+
+        var tempCan = document.createElement('canvas'),
+            tempCtx = tempCan.getContext('2d');
+
+        tempCan.style.width = width + 'px';
+        tempCan.style.height = height + 'px';
+        tempCan.width = width;
+        tempCan.height = height;
+
+        tempCtx.drawImage(ctx.canvas, 0, 0);
+
+        can.style.width = width + 'px';
+        can.style.height = height + 'px';
+        can.width = width;
+        can.height = height;
+
+        ctx.drawImage(tempCtx.canvas, 0, 0);
+
+    } else {
+
+        can = document.createElement('canvas');
+
+        if (can !== null) {
+
+            can.style.width = width + 'px';
+            can.style.height = height + 'px';
+            can.width = width;
+            can.height = height;
+            can.setAttribute('id', id);
+
+            return can;
+        }
+    }
+},
 clearCanvas = function(can) {
     ctx = can.getContext('2d');
     ctx.clearRect(0, 0, can.width, can.height);

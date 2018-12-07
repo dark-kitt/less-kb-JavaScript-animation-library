@@ -20,7 +20,7 @@ window.onload = function() {
     /*create your canvas aniamtion*/
     var initBall = function(parent, append) {
         /*the hiDPICanvas function is defined in the global-functions.js*/
-        var canvas = hiDPICanvas('canvas', window.innerWidth, window.innerHeight);
+        var canvas = setCanvas('canvas', window.innerWidth, window.innerHeight);
 
         if (append) {
             parent.appendChild(canvas);
@@ -29,7 +29,10 @@ window.onload = function() {
         }
 
         var can = document.getElementById('canvas'),
-            ctx = can.getContext('2d');
+            ctx = can.getContext('2d'),
+            /*create a offScreenCanvascreen fot better performance*/
+            offScreenCanvas = document.createElement('canvas'),
+            offCtx = offScreenCanvas.getContext('2d');
 
         /*define your object*/
         var ball = {
@@ -40,10 +43,10 @@ window.onload = function() {
             ms: 5, // move speed
             radius: 25,
             color: randomRGBA(100, 200, (randomInt(0, 100) / 100)),
-            draw: function(can, ctx) {
-                ctx.beginPath();
+            draw: function(offScreenCanvas, offCtx) {
+                offCtx.beginPath();
 
-                if (this.x + this.ms < (can.width / pixelRatio) && this.mx === 'right') {
+                if (this.x + this.ms < offScreenCanvas.width && this.mx === 'right') {
                     this.x += this.ms; // move right
                 } else {
                     this.mx = 'left';
@@ -55,7 +58,7 @@ window.onload = function() {
                     this.mx = 'right';
                 }
 
-                if (this.y + this.ms < (can.height / pixelRatio) && this.my === 'up') {
+                if (this.y + this.ms < offScreenCanvas.height && this.my === 'up') {
                     this.y += this.ms; // move up
                 } else {
                     this.my = 'down';
@@ -67,10 +70,12 @@ window.onload = function() {
                     this.my = 'up';
                 }
 
-                ctx.arc(this.x, this.y, this.radius, 0, (Math.PI * 2), true);
-                ctx.closePath();
-                ctx.fillStyle = this.color;
-                ctx.fill();
+                offCtx.arc(this.x, this.y, this.radius, 0, (Math.PI * 2), true);
+                offCtx.closePath();
+                offCtx.fillStyle = this.color;
+                offCtx.fill();
+
+                return offCtx;
             }
         };
 
@@ -88,9 +93,15 @@ window.onload = function() {
                 if (difference >= interval) {
                     startTime = currentTime - (difference % interval);
 
+                    offScreenCanvas.width = can.width;
+                    offScreenCanvas.height = can.height;
+
                     /*the clearCanvas function is defined in the global-functions.js*/
-                    clearCanvas(can);
-                    objs.draw(can, ctx);
+                    clearCanvas(offScreenCanvas, offCtx);
+                    clearCanvas(can, ctx);
+
+                    objs.draw(offScreenCanvas, offCtx);
+                    ctx.drawImage(offScreenCanvas, 0, 0);
                 }
 
                 request.id = startAnimation(can, ctx, objs, loop);
@@ -156,15 +167,8 @@ window.onresize = function() {
 
     if (document.getElementById('canvas') !== null) {
 
-        var canvas = document.getElementById('canvas');
+        setCanvas('canvas', window.innerWidth, window.innerHeight);
 
-        /*global handling*/
-        canvasAnimations.initBall.running = false;
-        /*the stopAnimation function is defined in the global-functions.js*/
-        stopAnimation(canvasAnimations.initBall.request);
-
-        hiDPICanvas('canvas', window.innerWidth, window.innerHeight);
-        canvasAnimations.initBall.obj.draw(canvas, canvas.getContext('2d'));
-    }
+        }
 
 };
