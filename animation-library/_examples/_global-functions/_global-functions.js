@@ -155,7 +155,7 @@ stopAnimation = function(req) {
 },
 fixValue = function(num, places) {
 	var place = places || (places === 0 ? 0 : 2);
-	return parseFloat(num.toFixed(place));
+	return parseFloat(parseFloat(num).toFixed(place));
 },
 randomInt = function(min, max) {
     return Math.round(Math.random() * (max - min) + min);
